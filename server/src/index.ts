@@ -14,6 +14,14 @@ server.listen(3000);
 const io = socketio(server);
 
 io.on('connection', (socket) => {
-  console.log('New conn');
   socket.emit('message', 'fuck you lmao');
+
+  socket.broadcast.emit(
+    'message',
+    'this will not show to the user currently logging in so fuck them'
+  );
+
+  socket.on('disconnect', () => {
+    io.emit('message', 'lmao that bitch actually fucking left');
+  });
 });
