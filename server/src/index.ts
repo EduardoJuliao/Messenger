@@ -1,27 +1,56 @@
-import http from 'http';
-import socketio from 'socket.io';
+var app = require('express')();
+var http = require('http').createServer(app);
+var io = require('socket.io')(http);
+const MongoClient = require('mongodb').MongoClient;
 
-const requestListener = function (_: any, res: any) {
-  res.writeHead(200);
+app.get('/', (_req: any, res: any) => {
   res.end(
     '<!DOCTYPE html>Hello, World! <script src="/socket.io/socket.io.js"></script><script>var socket = io();socket.on("message", (message) => {console.log(message);});</script>'
   );
-};
+});
 
-const server = http.createServer(requestListener);
-server.listen(3000);
+http.listen(3000, () => {
+  console.log('listening on *:3000');
+});
 
-const io = socketio(server);
+const uri =
+  'mongodb+srv://dbUser:48JgP47FXpjSql5i@cluster0-lzsvc.gcp.mongodb.net/test?retryWrites=true&w=majority';
+const client = new MongoClient(uri, { useNewUrlParser: true });
 
-io.on('connection', (socket) => {
-  socket.emit('message', 'fuck you lmao');
+client.connect((err: any, db: any) => {
+  // perform actions on the collection object
 
-  socket.broadcast.emit(
-    'message',
-    'this will not show to the user currently logging in so fuck them'
-  );
+  io.on('connection', (socket: any) => {
+    socket.emit('message', 'fuck you lmao');
+    socket.broadcast.emit(
+      'message',
+      'this will not show to the user currently logging in so fuck them'
+    );
+    socket.on('disconnect', () => {
+      io.emit('message', 'lmao that bitch actually fucking left');
+    });
+  });
 
-  socket.on('disconnect', () => {
-    io.emit('message', 'lmao that bitch actually fucking left');
+  if (err) throw err;
+  var dbo = db.db('mydb');
+
+  app.post('/', (_req: any, res: any) => {
+    let parsed = _req.query;
+    parsed = JSON.parse(JSON.stringify(parsed));
+
+    var obj = {
+      date: new Date().getTime(),
+      name: parsed.name,
+      asdf: parsed.asdf,
+    };
+
+    console.log(obj);
+
+    dbo.collection('customers').insertOne(obj, function (err, res) {
+      if (err) throw err;
+
+      console.log('1 document inserted');
+      client.close();
+    });
   });
 });
