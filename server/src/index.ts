@@ -23,6 +23,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true });
 client.connect((err: any, db: any) => {
   // perform actions on the collection object
   var dbo = db.db('mydb');
+  if (err) throw err;
+
   function recordMessages(message: object) {
     dbo.collection('customers').insertOne(message, (err: any, res: any) => {
       if (err) throw err;
@@ -31,11 +33,18 @@ client.connect((err: any, db: any) => {
     });
   }
   io.on('connection', (socket: any) => {
-    socket.on('clientSentMessage', (message: object) => {
+    function onNewMessage(message: object) {
       recordMessages(message);
+      emitMessage(message);
+    }
+    socket.on('clientSentMessage', (message: object) => {
+      onNewMessage(message);
     });
 
-    socket.emit('message', 'fuck you lmao');
+    function emitMessage(message: object) {
+      socket.emit('newChatMessage', message);
+    }
+
     socket.broadcast.emit(
       'message',
       'this will not show to the user currently logging in so fuck them'
@@ -44,6 +53,4 @@ client.connect((err: any, db: any) => {
       io.emit('message', 'lmao that bitch actually fucking left');
     });
   });
-
-  if (err) throw err;
 });
