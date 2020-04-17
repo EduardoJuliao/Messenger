@@ -1,0 +1,29 @@
+.message {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  margin: 10px 0px 0px 0px;
+  background-color: rgb(97, 52, 168);
+  border-radius: 10px;
+  color: white;
+}
+
+.header {
+  font-weight: bold;
+}
+
+.holder {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(108, 59, 187);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.body {
+}
+
+.footer {
+  margin-top: 10px;
+  align-self: flex-end;
+}

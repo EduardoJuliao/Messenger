@@ -2,6 +2,9 @@ var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 const MongoClient = require('mongodb').MongoClient;
+import cors from 'cors';
+
+app.use(cors());
 
 app.get('/', (_req: any, res: any) => {
   res.end(
