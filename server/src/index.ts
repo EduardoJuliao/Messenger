@@ -34,8 +34,8 @@ client.connect((err: any, db: any) => {
   if (err) throw err;
   var dbo = db.db('mydb');
 
-  app.post('/', (_req: any, res: any) => {
-    let parsed = _req.query;
+  app.post('/', (req: any, res: any) => {
+    let parsed = req.query;
     parsed = JSON.parse(JSON.stringify(parsed));
 
     var obj = {
@@ -46,11 +46,11 @@ client.connect((err: any, db: any) => {
 
     console.log(obj);
 
-    dbo.collection('customers').insertOne(obj, function (err, res) {
+    dbo.collection('customers').insertOne(obj, function (err: any, res: any) {
       if (err) throw err;
 
       console.log('1 document inserted');
-      client.close();
     });
+    res.send();
   });
 });
