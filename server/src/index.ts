@@ -8,7 +8,7 @@ app.use(cors());
 
 app.get('/', (_req: any, res: any) => {
   res.end(
-    '<!DOCTYPE html>Hello, World! <script src="/socket.io/socket.io.js"></script><script>var socket = io();socket.on("message", (message) => {console.log(message);});</script>'
+    `<!DOCTYPE html>Hello, World!<script src="/socket.io/socket.io.js"></script><script>var obj = {"date": new Date(),"text": "Heyo 😭","sender": {"id": "dsfqwfeqw","name": "Eduardo"}}; var socket = io(); socket.emit("clientSentMessage", obj );</script>`
   );
 });
 
@@ -22,8 +22,19 @@ const client = new MongoClient(uri, { useNewUrlParser: true });
 
 client.connect((err: any, db: any) => {
   // perform actions on the collection object
+  var dbo = db.db('mydb');
+  function recordMessages(message: object) {
+    dbo.collection('customers').insertOne(message, (err: any, res: any) => {
+      if (err) throw err;
 
+      console.log('1 document inserted');
+    });
+  }
   io.on('connection', (socket: any) => {
+    socket.on('clientSentMessage', (message: object) => {
+      recordMessages(message);
+    });
+
     socket.emit('message', 'fuck you lmao');
     socket.broadcast.emit(
       'message',
@@ -35,25 +46,4 @@ client.connect((err: any, db: any) => {
   });
 
   if (err) throw err;
-  var dbo = db.db('mydb');
-
-  app.post('/', (req: any, res: any) => {
-    let parsed = req.query;
-    parsed = JSON.parse(JSON.stringify(parsed));
-
-    var obj = {
-      date: new Date().getTime(),
-      name: parsed.name,
-      asdf: parsed.asdf,
-    };
-
-    console.log(obj);
-
-    dbo.collection('customers').insertOne(obj, function (err: any, res: any) {
-      if (err) throw err;
-
-      console.log('1 document inserted');
-    });
-    res.send();
-  });
 });
