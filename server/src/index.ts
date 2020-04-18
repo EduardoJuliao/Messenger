@@ -32,10 +32,14 @@ client.connect((err: any, db: any) => {
       console.log('1 document inserted');
     });
   }
+
   io.on('connection', (socket: any) => {
     function onNewMessage(message: object) {
       recordMessages(message);
       emitMessage(message);
+    }
+    function returnMessages() {
+      return dbo.collection('customers').find({}).toArray();
     }
     socket.on('clientSentMessage', (message: object) => {
       onNewMessage(message);
@@ -44,6 +48,9 @@ client.connect((err: any, db: any) => {
     function emitMessage(message: object) {
       socket.emit('newChatMessage', message);
     }
+    returnMessages().then((result: any) => {
+      socket.emit('messageHistory', result);
+    });
 
     socket.broadcast.emit(
       'message',
