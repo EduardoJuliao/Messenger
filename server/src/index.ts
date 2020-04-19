@@ -1,9 +1,9 @@
-var app = require('express')();
-var http = require('http').createServer(app);
-var io = require('socket.io')(http);
+const app = require('express')();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 const MongoClient = require('mongodb').MongoClient;
 import cors from 'cors';
-
+import * as messaging from './messaging';
 app.use(cors());
 
 app.get('/', (_req: any, res: any) => {
@@ -25,30 +25,17 @@ client.connect((err: any, db: any) => {
   var dbo = db.db('mydb');
   if (err) throw err;
 
-  function recordMessages(message: object) {
-    dbo.collection('customers').insertOne(message, (err: any, res: any) => {
-      if (err) throw err;
-
-      console.log('1 document inserted');
-    });
-  }
-
   io.on('connection', (socket: any) => {
-    function onNewMessage(message: object) {
-      recordMessages(message);
-      emitMessage(message);
+    function onNewMessage(message: object, dbo: any) {
+      messaging.emitMessage(message, socket);
+      messaging.recordMessages(message, dbo);
     }
-    function returnMessages() {
-      return dbo.collection('customers').find({}).toArray();
-    }
+
     socket.on('clientSentMessage', (message: object) => {
-      onNewMessage(message);
+      onNewMessage(message, dbo);
     });
 
-    function emitMessage(message: object) {
-      socket.emit('newChatMessage', message);
-    }
-    returnMessages().then((result: any) => {
+    messaging.returnMessages(dbo).then((result: any) => {
       socket.emit('messageHistory', result);
     });
 
