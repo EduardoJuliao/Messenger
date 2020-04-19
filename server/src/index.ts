@@ -8,7 +8,7 @@ app.use(cors());
 
 app.get('/', (_req: any, res: any) => {
   res.end(
-    `<!DOCTYPE html>Hello, World!<script src="/socket.io/socket.io.js"></script><script>var obj = {"date": new Date(),"text": "Heyo 😭","sender": {"id": "dsfqwfeqw","name": "Eduardo"}}; var socket = io(); socket.emit("clientSentMessage", obj );</script>`
+    `<!DOCTYPE html> <h1 id="id01">Hello, World!</h1> <script src="/socket.io/socket.io.js"></script> <script>var obj = { "date": new Date(), "text": "Heyo 😭", "sender": { "id": "dsfqwfeqw", "name": "Eduardo" } }; var socket = io(); socket.emit( "clientSentMessage", obj ); socket.emit( "clientSentMessage", obj ); socket.on('messageHistory', (msg) => { var element = document.getElementById("id01"); element.innerHTML = JSON.stringify(msg) }); </script>`
   );
 });
 
