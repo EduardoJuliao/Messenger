@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<h1 id="id01">Hello, World!</h1>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script>var obj = {
+        "date": new Date(),
+        "text": "Heyo 😭",
+        "sender": {
+            "id": "dsfqwfeqw",
+            "name": "Eduardo"
+        }
+    };
+    var socket = io.connect('http://localhost:3000');
+
+    // socket.emit("clientSentMessage", obj);
+
+    socket.on('messageHistory', (msg) => {
+        var element = document.getElementById("id01");
+        element.innerHTML = JSON.stringify(msg);
+
+    });
+    socket.on('newChatMessage', function (message) {
+        var notification = new Notification(message.sender.name, {
+            title: 'message from ' + message.sender.name,
+            body: message.text
+        });
+        notification;
+    });
+
+    socket.on('newChatMessage', function (data) {
+        // get message status
+        console.log('aaaaaaaaaaa');
+
+
+        // If status is clear, clear text
+
+    });
+</script>
