@@ -1,14 +1,14 @@
-var app = require('express')();
-var http = require('http').createServer(app);
-var io = require('socket.io')(http);
+const app = require('express')();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 const MongoClient = require('mongodb').MongoClient;
 import cors from 'cors';
-
+import * as messaging from './messaging';
 app.use(cors());
 
 app.get('/', (_req: any, res: any) => {
   res.end(
-    `<!DOCTYPE html>Hello, World!<script src="/socket.io/socket.io.js"></script><script>var obj = {"date": new Date(),"text": "Heyo 😭","sender": {"id": "dsfqwfeqw","name": "Eduardo"}}; var socket = io(); socket.emit("clientSentMessage", obj );</script>`
+    `<!DOCTYPE html> <h1 id="id01">Hello, World!</h1> <script src="/socket.io/socket.io.js"></script> <script>var obj = { "date": new Date(), "text": "Heyo 😭", "sender": { "id": "dsfqwfeqw", "name": "Eduardo" } }; var socket = io(); socket.emit( "clientSentMessage", obj ); socket.emit( "clientSentMessage", obj ); socket.on('messageHistory', (msg) => { var element = document.getElementById("id01"); element.innerHTML = JSON.stringify(msg) }); </script>`
   );
 });
 
@@ -23,19 +23,22 @@ const client = new MongoClient(uri, { useNewUrlParser: true });
 client.connect((err: any, db: any) => {
   // perform actions on the collection object
   var dbo = db.db('mydb');
-  function recordMessages(message: object) {
-    dbo.collection('customers').insertOne(message, (err: any, res: any) => {
-      if (err) throw err;
+  if (err) throw err;
 
-      console.log('1 document inserted');
-    });
-  }
   io.on('connection', (socket: any) => {
+    function onNewMessage(message: object, dbo: any) {
+      messaging.emitMessage(message, socket);
+      messaging.recordMessages(message, dbo);
+    }
+
     socket.on('clientSentMessage', (message: object) => {
-      recordMessages(message);
+      onNewMessage(message, dbo);
     });
 
-    socket.emit('message', 'fuck you lmao');
+    messaging.returnMessages(dbo).then((result: any) => {
+      socket.emit('messageHistory', result);
+    });
+
     socket.broadcast.emit(
       'message',
       'this will not show to the user currently logging in so fuck them'
@@ -44,6 +47,4 @@ client.connect((err: any, db: any) => {
       io.emit('message', 'lmao that bitch actually fucking left');
     });
   });
-
-  if (err) throw err;
 });
