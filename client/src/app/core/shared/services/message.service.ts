@@ -30,7 +30,7 @@ export class MessageService {
       console.log(result);
     });
 
-    this.socket.on('recieve', () => {
+    this.socket.on('receive', () => {
 
     })
   }
