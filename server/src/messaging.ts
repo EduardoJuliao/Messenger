@@ -2,12 +2,13 @@ export function recordMessages(message: object, dbo: any) {
   dbo.collection('customers').insertOne(message, (err: any, res: any) => {
     if (err) throw err;
 
-    console.log('1 document inserted');
+    console.log('inserted count: ', res.insertedCount);
   });
 }
 
 export function emitMessage(message: object, socket: any) {
-  socket.emit('newChatMessage', message);
+  socket.broadcast.emit('newChatMessage', message);
+  console.log('asdasdasd');
 }
 
 export function returnMessages(dbo: any) {
