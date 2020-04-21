@@ -1,6 +1,12 @@
-<app-message *ngFor="let message of messages" [message]='message'>
-</app-message>
+<div class="holder">
+  <app-chat-list></app-chat-list>
+  <app-message *ngFor="let message of messages" [message]='message'>
+  </app-message>
+</div>
+
+
+<!-- <
 
 <button (click)="send()">
   send
-</button>
+</button> -->

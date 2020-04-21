@@ -1,5 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+@import "app/core/shared/scss/font-size.scss";
+@import "app/core/shared/scss//themes/dark-theme.scss";
+
+* {
+  font-size: $normal;
+  overflow: hidden;
+}
+
+html {
+  height: 100%;
+}
 
 body {
   font-family: Consolas, Arial, Helvetica, sans-serif;
+  padding: 0;
+  margin: 0;
 }

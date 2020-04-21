@@ -1,0 +1,14 @@
+.holder {
+  display: flex;
+}
+
+app-chat-list {
+  width: 40%;
+}
+
+app-message {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}

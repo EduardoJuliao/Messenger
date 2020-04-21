@@ -1,0 +1,8 @@
+<div class="list">
+  <div *ngFor="let chat of chats" class="list-item">
+    <span class="chat-name">
+      {{chat.name}}
+    </span>
+    <span class="badge" *ngIf="chat.unreadMessageCount > 0"> {{chat.unreadMessageCount}}</span>
+  </div>
+</div>

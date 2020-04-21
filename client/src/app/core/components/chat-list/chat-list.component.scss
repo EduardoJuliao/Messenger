@@ -1,0 +1,34 @@
+@import "../../shared/scss/font-size.scss";
+@import "../../shared/scss/color.scss";
+
+.list {
+  background-color: black;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  height: 99vh;
+  overflow-y: auto;
+}
+
+.list-item {
+  background-color: $message-main-color;
+  margin: 5px;
+  height: 50px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+}
+
+.chat-name {
+  font-size: $large;
+}
+
+.badge {
+  font-size: $small;
+  background-color: $badge-background-color;
+  color: $badge-text-color;
+  border-radius: 50%;
+  padding: 5px;
+}
